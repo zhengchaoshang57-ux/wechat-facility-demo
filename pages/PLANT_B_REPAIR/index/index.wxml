@@ -1,0 +1,61 @@
+<!-- pages/PLANT_B_REPAIR/index/index.wxml -->
+<view class="container">
+
+<!-- 顶部标题栏 -->
+<view class="header">
+  <view class="header-title">
+    <text class="title">示例厂区B维修中心</text>
+    <text class="subtitle">检查员页面</text>
+  </view>
+</view>
+
+<!-- 待办事项概览 -->
+<view class="todo-section">
+  <view class="todo-header">
+    <text class="todo-title">待办事项</text>
+    <text class="todo-count">{{todoCount}}项待处理</text>
+  </view>
+
+  <!-- 动态显示待办事项 -->
+  <view class="todo-preview" wx:if="{{recentTodos.length > 0}}">
+    <block wx:for="{{recentTodos}}" wx:key="id">
+      <view class="todo-preview-item">
+        <text class="todo-item-text">{{item.title}}</text>
+        <text class="todo-item-status {{item.status}}">
+          {{item.status === 'pending' ? '待处理' : 
+            item.status === 'in-progress' ? '进行中' : 
+            item.status === 'pending_review' ? '待审核' : '已完成'}}
+        </text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-preview" wx:else>
+    <text class="empty-text">暂无待办事项</text>
+    <text class="empty-hint">点击下方按钮创建新的待办事项</text>
+  </view>
+
+  <button class="jump-btn" bindtap="goToTodoPage">查看全部待办事项</button>
+</view>
+
+<!-- 功能操作区域 -->
+<view class="action-container">
+  <view class="action-card" bindtap="goToCreateTodo">
+    <view class="action-icon">✏️</view>
+    <text class="action-title">新建维修申请</text>
+    <text class="action-desc">提交新的维修申请</text>
+  </view>
+  
+  <view class="action-card" bindtap="goToTodoPage">
+    <view class="action-icon">📋</view>
+    <text class="action-title">管理待办事项</text>
+    <text class="action-desc">查看和编辑所有待办事项</text>
+  </view>
+</view>
+
+<!-- 快速操作区域 -->
+<view class="quick-actions">
+  <button class="action-btn logout-btn" bindtap="goToLogin">返回登录界面</button> 
+</view>
+</view>

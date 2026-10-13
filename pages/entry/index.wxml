@@ -1,0 +1,20 @@
+<!--pages/entry/index.wxml-->
+<view class="container">
+  <view class="title">选择示例厂区与业务类型</view>
+
+  <button class="center-btn plant-a-repair-btn" bindtap="goToPlantARepair">
+    <text>示例厂区A维修</text>
+  </button>
+
+  <button class="center-btn plant-a-cleaning-btn" bindtap="goToPlantACleaning">
+    <text>示例厂区A保洁</text>
+  </button>
+
+  <button class="center-btn plant-b-repair-btn" bindtap="goToPlantBRepair">
+    <text>示例厂区B维修</text>
+  </button>
+
+  <button class="center-btn plant-b-cleaning-btn" bindtap="goToPlantBCleaning">
+    <text>示例厂区B保洁</text>
+  </button>
+</view>

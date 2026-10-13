@@ -1,0 +1,616 @@
+<!--pages/PLANT_A_CLEANING/history/history.wxml-->
+<view class="container">
+  <!-- 顶部标题栏 -->
+  <view class="header">
+    <view class="header-left">
+      <text class="back-btn" bindtap="goBack">←</text>
+    </view>
+    <text class="header-title">历史记录</text>
+    <view class="header-right">
+      <text class="filter-btn" bindtap="showFilter">筛选</text>
+    </view>
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="stats">
+    <view class="stat-item">
+      <text class="stat-number">{{totalCount}}</text>
+      <text class="stat-label">总记录</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{completedCount}}</text>
+      <text class="stat-label">已完成</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{unfinishedCount}}</text>
+      <text class="stat-label">未完成</text>
+    </view>
+  </view>
+
+  <!-- 历史记录列表 -->
+  <view class="section-title" wx:if="{{todayRecords.length > 0}}">
+    今日记录 ({{todayCount}})
+    <text class="sub-count">已完成: {{todayCompletedRecords.length}} | 未完成: {{todayUnfinishedRecords.length}}</text>
+  </view>
+  
+  <!-- 今日已完成 -->
+  <view class="sub-section" wx:if="{{todayCompletedRecords.length > 0}}">
+    <text class="sub-section-title">✅ 今日已完成</text>
+    <block wx:for="{{todayCompletedRecords}}" wx:key="id">
+      <view class="record-item completed">
+        <view class="record-header">
+          <text class="record-title">{{item.title}}</text>
+          <view class="record-status-group">
+            <text class="record-status-badge completed">已完成</text>
+            <!-- 优先级标签 -->
+            <view class="priority-tag {{item.priority === 'high' ? 'urgent' : 'normal'}}">
+              {{item.priority === 'high' ? '紧急' : '普通'}}
+            </view>
+          </view>
+        </view>
+        
+        <!-- 来源、区域、问题信息 -->
+        <view class="record-info-group">
+          <text class="record-info">来源：{{item.source}}</text>
+          <!-- 如果是"其他"区域，显示其他描述 -->
+          <text class="record-info">问题区域：{{item.problemArea === '其他' ? item.otherAreaDescription : item.problemArea}}</text>
+          <text class="record-info">问题：{{item.problem}}</text>
+          <text class="record-info">分类：{{item.problemType}}</text>
+        </view>
+
+        <!-- 子区域和门牌号信息 -->
+        <view class="record-subinfo-group" wx:if="{{item.subArea || item.doorNumber}}">
+          <!-- 如果是"其他"子区域，显示其他描述 -->
+          <text class="record-info" wx:if="{{item.subArea}}">子区域：{{item.subArea === '其他' ? item.otherSubAreaDescription : item.subArea}}</text>
+          <text class="record-info" wx:if="{{item.doorNumber}}">门牌号：{{item.doorNumber}}</text>
+        </view>
+        
+        <!-- 统一的时间信息区域 -->
+        <view class="time-info-section">
+          <view class="time-info-row">
+            <text class="time-label">创建时间：</text>
+            <text class="time-value">{{item.createTime || '无'}}</text>
+          </view>
+          <view class="time-info-row" wx:if="{{item.startTime}}">
+            <text class="time-label">开始时间：</text>
+            <text class="time-value">{{item.startTime}}</text>
+          </view>
+          <view class="time-info-row completed-time">
+            <text class="time-label">完成时间：</text>
+            <text class="time-value">{{item.completedTime}}</text>
+          </view>
+        </view>
+        
+        <text class="record-desc">描述：{{item.description}}</text>
+        
+        <!-- 显示原始问题图片 -->
+        <view class="record-images" wx:if="{{item.images && item.images.length > 0}}">
+          <view class="images-title">原始问题图片 ({{item.images.length}}张)</view>
+          <view class="images-list">
+            <block wx:for="{{item.images}}" wx:key="index">
+              <image class="record-image" 
+                    src="{{item}}" 
+                    mode="aspectFill" 
+                    bindtap="previewImage" 
+                    data-id="{{item.id}}" 
+                    data-index="{{index}}"
+                    data-type="images"></image>
+            </block>
+          </view>
+        </view>
+
+        <!-- 显示维修员完成任务后上传的图片 -->
+        <view class="record-images" wx:if="{{item.completedImages && item.completedImages.length > 0}}">
+          <view class="images-title">维修完成图片 ({{item.completedImages.length}}张)</view>
+          <view class="images-list">
+            <block wx:for="{{item.completedImages}}" wx:key="index">
+              <image class="record-image" 
+                    src="{{item}}" 
+                    mode="aspectFill" 
+                    bindtap="previewImage" 
+                    data-id="{{item.id}}" 
+                    data-index="{{index}}"
+                    data-type="completedImages"></image>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 人员信息 -->
+        <view class="people-info-section">
+          <view class="people-info-row">
+            <text class="people-label">创建人：</text>
+            <text class="people-value">{{item.creator}}</text>
+          </view>
+          <view class="people-info-row">
+            <text class="people-label">维修员：</text>
+            <text class="people-value">{{item.assignee}}</text>
+          </view>
+          <view class="people-info-row" wx:if="{{item.completedBy}}">
+            <text class="people-label">完成人：</text>
+            <text class="people-value">{{item.completedBy}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 今日未完成 -->
+  <view class="sub-section" wx:if="{{todayUnfinishedRecords.length > 0}}">
+    <text class="sub-section-title unfinished">❌ 今日未完成</text>
+    <block wx:for="{{todayUnfinishedRecords}}" wx:key="id">
+      <view class="record-item unfinished">
+        <view class="record-header">
+          <text class="record-title">{{item.title}}</text>
+          <view class="record-status-group">
+            <text class="record-status-badge unfinished">未完成</text>
+            <!-- 优先级标签 -->
+            <view class="priority-tag {{item.priority === 'high' ? 'urgent' : 'normal'}}">
+              {{item.priority === 'high' ? '紧急' : '普通'}}
+            </view>
+          </view>
+        </view>
+        
+        <!-- 来源、区域、问题信息 -->
+        <view class="record-info-group">
+          <text class="record-info">来源：{{item.source}}</text>
+          <!-- 如果是"其他"区域，显示其他描述 -->
+          <text class="record-info">问题区域：{{item.problemArea === '其他' ? item.otherAreaDescription : item.problemArea}}</text>
+          <text class="record-info">问题：{{item.problem}}</text>
+          <text class="record-info">分类：{{item.problemType}}</text>
+        </view>
+
+        <!-- 子区域和门牌号信息 -->
+        <view class="record-subinfo-group" wx:if="{{item.subArea || item.doorNumber}}">
+          <!-- 如果是"其他"子区域，显示其他描述 -->
+          <text class="record-info" wx:if="{{item.subArea}}">子区域：{{item.subArea === '其他' ? item.otherSubAreaDescription : item.subArea}}</text>
+          <text class="record-info" wx:if="{{item.doorNumber}}">门牌号：{{item.doorNumber}}</text>
+        </view>
+        
+        <!-- 统一的时间信息区域 -->
+        <view class="time-info-section">
+          <view class="time-info-row">
+            <text class="time-label">创建时间：</text>
+            <text class="time-value">{{item.createTime || '无'}}</text>
+          </view>
+          <view class="time-info-row" wx:if="{{item.startTime}}">
+            <text class="time-label">开始时间：</text>
+            <text class="time-value">{{item.startTime}}</text>
+          </view>
+          <view class="time-info-row unfinished-time">
+            <text class="time-label">未完成时间：</text>
+            <text class="time-value">{{item.unfinishedTime}}</text>
+          </view>
+        </view>
+        
+        <text class="record-desc">描述：{{item.description}}</text>
+        
+        <!-- 显示原始问题图片 -->
+        <view class="record-images" wx:if="{{item.images && item.images.length > 0}}">
+          <view class="images-title">原始问题图片 ({{item.images.length}}张)</view>
+          <view class="images-list">
+            <block wx:for="{{item.images}}" wx:key="index">
+              <image class="record-image" 
+                    src="{{item}}" 
+                    mode="aspectFill" 
+                    bindtap="previewImage" 
+                    data-id="{{item.id}}" 
+                    data-index="{{index}}"
+                    data-type="images"></image>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 人员信息 -->
+        <view class="people-info-section">
+          <view class="people-info-row">
+            <text class="people-label">创建人：</text>
+            <text class="people-value">{{item.creator}}</text>
+          </view>
+          <view class="people-info-row">
+            <text class="people-label">维修员：</text>
+            <text class="people-value">{{item.assignee}}</text>
+          </view>
+        </view>
+        
+        <!-- 未完成原因 -->
+        <view class="unfinished-reason" wx:if="{{item.unfinishedReason}}">
+          <text class="reason-label">未完成原因:</text>
+          <text class="reason-text">{{item.unfinishedReason}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="section-title" wx:if="{{weekRecords.length > 0}}">
+    本周记录 ({{weekCount}})
+    <text class="sub-count">已完成: {{weekCompletedRecords.length}} | 未完成: {{weekUnfinishedRecords.length}}</text>
+  </view>
+  
+  <!-- 本周已完成 -->
+  <view class="sub-section" wx:if="{{weekCompletedRecords.length > 0}}">
+    <text class="sub-section-title">✅ 本周已完成</text>
+    <block wx:for="{{weekCompletedRecords}}" wx:key="id">
+      <view class="record-item completed">
+        <view class="record-header">
+          <text class="record-title">{{item.title}}</text>
+          <view class="record-status-group">
+            <text class="record-status-badge completed">已完成</text>
+            <!-- 优先级标签 -->
+            <view class="priority-tag {{item.priority === 'high' ? 'urgent' : 'normal'}}">
+              {{item.priority === 'high' ? '紧急' : '普通'}}
+            </view>
+          </view>
+        </view>
+        
+        <!-- 来源、区域、问题信息 -->
+        <view class="record-info-group">
+          <text class="record-info">来源：{{item.source}}</text>
+          <!-- 如果是"其他"区域，显示其他描述 -->
+          <text class="record-info">问题区域：{{item.problemArea === '其他' ? item.otherAreaDescription : item.problemArea}}</text>
+          <text class="record-info">问题：{{item.problem}}</text>
+          <text class="record-info">分类：{{item.problemType}}</text>
+        </view>
+
+        <!-- 子区域和门牌号信息 -->
+        <view class="record-subinfo-group" wx:if="{{item.subArea || item.doorNumber}}">
+          <!-- 如果是"其他"子区域，显示其他描述 -->
+          <text class="record-info" wx:if="{{item.subArea}}">子区域：{{item.subArea === '其他' ? item.otherSubAreaDescription : item.subArea}}</text>
+          <text class="record-info" wx:if="{{item.doorNumber}}">门牌号：{{item.doorNumber}}</text>
+        </view>
+        
+        <!-- 统一的时间信息区域 -->
+        <view class="time-info-section">
+          <view class="time-info-row">
+            <text class="time-label">创建时间：</text>
+            <text class="time-value">{{item.createTime || '无'}}</text>
+          </view>
+          <view class="time-info-row" wx:if="{{item.startTime}}">
+            <text class="time-label">开始时间：</text>
+            <text class="time-value">{{item.startTime}}</text>
+          </view>
+          <view class="time-info-row completed-time">
+            <text class="time-label">完成时间：</text>
+            <text class="time-value">{{item.completedTime}}</text>
+          </view>
+        </view>
+        
+        <text class="record-desc">描述：{{item.description}}</text>
+        
+        <!-- 显示原始问题图片 -->
+        <view class="record-images" wx:if="{{item.images && item.images.length > 0}}">
+          <view class="images-title">原始问题图片 ({{item.images.length}}张)</view>
+          <view class="images-list">
+            <block wx:for="{{item.images}}" wx:key="index">
+              <image class="record-image" 
+                    src="{{item}}" 
+                    mode="aspectFill" 
+                    bindtap="previewImage" 
+                    data-id="{{item.id}}" 
+                    data-index="{{index}}"
+                    data-type="images"></image>
+            </block>
+          </view>
+        </view>
+
+        <!-- 显示维修员完成任务后上传的图片 -->
+        <view class="record-images" wx:if="{{item.completedImages && item.completedImages.length > 0}}">
+          <view class="images-title">维修完成图片 ({{item.completedImages.length}}张)</view>
+          <view class="images-list">
+            <block wx:for="{{item.completedImages}}" wx:key="index">
+              <image class="record-image" 
+                    src="{{item}}" 
+                    mode="aspectFill" 
+                    bindtap="previewImage" 
+                    data-id="{{item.id}}" 
+                    data-index="{{index}}"
+                    data-type="completedImages"></image>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 人员信息 -->
+        <view class="people-info-section">
+          <view class="people-info-row">
+            <text class="people-label">创建人：</text>
+            <text class="people-value">{{item.creator}}</text>
+          </view>
+          <view class="people-info-row">
+            <text class="people-label">维修员：</text>
+            <text class="people-value">{{item.assignee}}</text>
+          </view>
+          <view class="people-info-row" wx:if="{{item.completedBy}}">
+            <text class="people-label">完成人：</text>
+            <text class="people-value">{{item.completedBy}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 本周未完成 -->
+  <view class="sub-section" wx:if="{{weekUnfinishedRecords.length > 0}}">
+    <text class="sub-section-title unfinished">❌ 本周未完成</text>
+    <block wx:for="{{weekUnfinishedRecords}}" wx:key="id">
+      <view class="record-item unfinished">
+        <view class="record-header">
+          <text class="record-title">{{item.title}}</text>
+          <view class="record-status-group">
+            <text class="record-status-badge unfinished">未完成</text>
+            <!-- 优先级标签 -->
+            <view class="priority-tag {{item.priority === 'high' ? 'urgent' : 'normal'}}">
+              {{item.priority === 'high' ? '紧急' : '普通'}}
+            </view>
+          </view>
+        </view>
+        
+        <!-- 来源、区域、问题信息 -->
+        <view class="record-info-group">
+          <text class="record-info">来源：{{item.source}}</text>
+          <!-- 如果是"其他"区域，显示其他描述 -->
+          <text class="record-info">问题区域：{{item.problemArea === '其他' ? item.otherAreaDescription : item.problemArea}}</text>
+          <text class="record-info">问题：{{item.problem}}</text>
+          <text class="record-info">分类：{{item.problemType}}</text>
+        </view>
+
+        <!-- 子区域和门牌号信息 -->
+        <view class="record-subinfo-group" wx:if="{{item.subArea || item.doorNumber}}">
+          <!-- 如果是"其他"子区域，显示其他描述 -->
+          <text class="record-info" wx:if="{{item.subArea}}">子区域：{{item.subArea === '其他' ? item.otherSubAreaDescription : item.subArea}}</text>
+          <text class="record-info" wx:if="{{item.doorNumber}}">门牌号：{{item.doorNumber}}</text>
+        </view>
+        
+        <!-- 统一的时间信息区域 -->
+        <view class="time-info-section">
+          <view class="time-info-row">
+            <text class="time-label">创建时间：</text>
+            <text class="time-value">{{item.createTime || '无'}}</text>
+          </view>
+          <view class="time-info-row" wx:if="{{item.startTime}}">
+            <text class="time-label">开始时间：</text>
+            <text class="time-value">{{item.startTime}}</text>
+          </view>
+          <view class="time-info-row unfinished-time">
+            <text class="time-label">未完成时间：</text>
+            <text class="time-value">{{item.unfinishedTime}}</text>
+          </view>
+        </view>
+        
+        <text class="record-desc">描述：{{item.description}}</text>
+        
+        <!-- 显示原始问题图片 -->
+        <view class="record-images" wx:if="{{item.images && item.images.length > 0}}">
+          <view class="images-title">原始问题图片 ({{item.images.length}}张)</view>
+          <view class="images-list">
+            <block wx:for="{{item.images}}" wx:key="index">
+              <image class="record-image" 
+                    src="{{item}}" 
+                    mode="aspectFill" 
+                    bindtap="previewImage" 
+                    data-id="{{item.id}}" 
+                    data-index="{{index}}"
+                    data-type="images"></image>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 人员信息 -->
+        <view class="people-info-section">
+          <view class="people-info-row">
+            <text class="people-label">创建人：</text>
+            <text class="people-value">{{item.creator}}</text>
+          </view>
+          <view class="people-info-row">
+            <text class="people-label">维修员：</text>
+            <text class="people-value">{{item.assignee}}</text>
+          </view>
+        </view>
+        
+        <!-- 未完成原因 -->
+        <view class="unfinished-reason" wx:if="{{item.unfinishedReason}}">
+          <text class="reason-label">未完成原因:</text>
+          <text class="reason-text">{{item.unfinishedReason}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="section-title" wx:if="{{olderRecords.length > 0}}">
+    更早记录 ({{olderRecords.length}})
+    <text class="sub-count">已完成: {{olderCompletedRecords.length}} | 未完成: {{olderUnfinishedRecords.length}}</text>
+  </view>
+  
+  <!-- 更早已完成 -->
+  <view class="sub-section" wx:if="{{olderCompletedRecords.length > 0}}">
+    <text class="sub-section-title">✅ 更早已完成</text>
+    <block wx:for="{{olderCompletedRecords}}" wx:key="id">
+      <view class="record-item completed">
+        <view class="record-header">
+          <text class="record-title">{{item.title}}</text>
+          <view class="record-status-group">
+            <text class="record-status-badge completed">已完成</text>
+            <!-- 优先级标签 -->
+            <view class="priority-tag {{item.priority === 'high' ? 'urgent' : 'normal'}}">
+              {{item.priority === 'high' ? '紧急' : '普通'}}
+            </view>
+          </view>
+        </view>
+        
+        <!-- 来源、区域、问题信息 -->
+        <view class="record-info-group">
+          <text class="record-info">来源：{{item.source}}</text>
+          <!-- 如果是"其他"区域，显示其他描述 -->
+          <text class="record-info">问题区域：{{item.problemArea === '其他' ? item.otherAreaDescription : item.problemArea}}</text>
+          <text class="record-info">问题：{{item.problem}}</text>
+          <text class="record-info">分类：{{item.problemType}}</text>
+        </view>
+
+        <!-- 子区域和门牌号信息 -->
+        <view class="record-subinfo-group" wx:if="{{item.subArea || item.doorNumber}}">
+          <!-- 如果是"其他"子区域，显示其他描述 -->
+          <text class="record-info" wx:if="{{item.subArea}}">子区域：{{item.subArea === '其他' ? item.otherSubAreaDescription : item.subArea}}</text>
+          <text class="record-info" wx:if="{{item.doorNumber}}">门牌号：{{item.doorNumber}}</text>
+        </view>
+        
+        <!-- 统一的时间信息区域 -->
+        <view class="time-info-section">
+          <view class="time-info-row">
+            <text class="time-label">创建时间：</text>
+            <text class="time-value">{{item.createTime || '无'}}</text>
+          </view>
+          <view class="time-info-row" wx:if="{{item.startTime}}">
+            <text class="time-label">开始时间：</text>
+            <text class="time-value">{{item.startTime}}</text>
+          </view>
+          <view class="time-info-row completed-time">
+            <text class="time-label">完成时间：</text>
+            <text class="time-value">{{item.completedTime}}</text>
+          </view>
+        </view>
+        
+        <text class="record-desc">描述：{{item.description}}</text>
+        
+        <!-- 显示原始问题图片 -->
+        <view class="record-images" wx:if="{{item.images && item.images.length > 0}}">
+          <view class="images-title">原始问题图片 ({{item.images.length}}张)</view>
+          <view class="images-list">
+            <block wx:for="{{item.images}}" wx:key="index">
+              <image class="record-image" 
+                    src="{{item}}" 
+                    mode="aspectFill" 
+                    bindtap="previewImage" 
+                    data-id="{{item.id}}" 
+                    data-index="{{index}}"
+                    data-type="images"></image>
+            </block>
+          </view>
+        </view>
+
+        <!-- 显示维修员完成任务后上传的图片 -->
+        <view class="record-images" wx:if="{{item.completedImages && item.completedImages.length > 0}}">
+          <view class="images-title">维修完成图片 ({{item.completedImages.length}}张)</view>
+          <view class="images-list">
+            <block wx:for="{{item.completedImages}}" wx:key="index">
+              <image class="record-image" 
+                    src="{{item}}" 
+                    mode="aspectFill" 
+                    bindtap="previewImage" 
+                    data-id="{{item.id}}" 
+                    data-index="{{index}}"
+                    data-type="completedImages"></image>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 人员信息 -->
+        <view class="people-info-section">
+          <view class="people-info-row">
+            <text class="people-label">创建人：</text>
+            <text class="people-value">{{item.creator}}</text>
+          </view>
+          <view class="people-info-row">
+            <text class="people-label">维修员：</text>
+            <text class="people-value">{{item.assignee}}</text>
+          </view>
+          <view class="people-info-row" wx:if="{{item.completedBy}}">
+            <text class="people-label">完成人：</text>
+            <text class="people-value">{{item.completedBy}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+  
+  <!-- 更早未完成 -->
+  <view class="sub-section" wx:if="{{olderUnfinishedRecords.length > 0}}">
+    <text class="sub-section-title unfinished">❌ 更早未完成</text>
+    <block wx:for="{{olderUnfinishedRecords}}" wx:key="id">
+      <view class="record-item unfinished">
+        <view class="record-header">
+          <text class="record-title">{{item.title}}</text>
+          <view class="record-status-group">
+            <text class="record-status-badge unfinished">未完成</text>
+            <!-- 优先级标签 -->
+            <view class="priority-tag {{item.priority === 'high' ? 'urgent' : 'normal'}}">
+              {{item.priority === 'high' ? '紧急' : '普通'}}
+            </view>
+          </view>
+        </view>
+        
+        <!-- 来源、区域、问题信息 -->
+        <view class="record-info-group">
+          <text class="record-info">来源：{{item.source}}</text>
+          <!-- 如果是"其他"区域，显示其他描述 -->
+          <text class="record-info">问题区域：{{item.problemArea === '其他' ? item.otherAreaDescription : item.problemArea}}</text>
+          <text class="record-info">问题：{{item.problem}}</text>
+          <text class="record-info">分类：{{item.problemType}}</text>
+        </view>
+
+        <!-- 子区域和门牌号信息 -->
+        <view class="record-subinfo-group" wx:if="{{item.subArea || item.doorNumber}}">
+          <!-- 如果是"其他"子区域，显示其他描述 -->
+          <text class="record-info" wx:if="{{item.subArea}}">子区域：{{item.subArea === '其他' ? item.otherSubAreaDescription : item.subArea}}</text>
+          <text class="record-info" wx:if="{{item.doorNumber}}">门牌号：{{item.doorNumber}}</text>
+        </view>
+        
+        <!-- 统一的时间信息区域 -->
+        <view class="time-info-section">
+          <view class="time-info-row">
+            <text class="time-label">创建时间：</text>
+            <text class="time-value">{{item.createTime || '无'}}</text>
+          </view>
+          <view class="time-info-row" wx:if="{{item.startTime}}">
+            <text class="time-label">开始时间：</text>
+            <text class="time-value">{{item.startTime}}</text>
+          </view>
+          <view class="time-info-row unfinished-time">
+            <text class="time-label">未完成时间：</text>
+            <text class="time-value">{{item.unfinishedTime}}</text>
+          </view>
+        </view>
+        
+        <text class="record-desc">描述：{{item.description}}</text>
+        
+        <!-- 显示图片 -->
+        <view class="record-images" wx:if="{{item.images && item.images.length > 0}}">
+          <view class="images-title">相关图片 ({{item.images.length}}张)</view>
+          <view class="images-list">
+            <block wx:for="{{item.images}}" wx:key="index">
+              <image class="record-image" 
+                     src="{{item}}" 
+                     mode="aspectFill" 
+                     bindtap="previewImage" 
+                     data-id="{{item.id}}" 
+                     data-index="{{index}}"
+                     data-type="images"></image>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 人员信息 -->
+        <view class="people-info-section">
+          <view class="people-info-row">
+            <text class="people-label">创建人：</text>
+            <text class="people-value">{{item.creator}}</text>
+          </view>
+          <view class="people-info-row">
+            <text class="people-label">维修员：</text>
+            <text class="people-value">{{item.assignee}}</text>
+          </view>
+        </view>
+        
+        <!-- 未完成原因 -->
+        <view class="unfinished-reason" wx:if="{{item.unfinishedReason}}">
+          <text class="reason-label">未完成原因:</text>
+          <text class="reason-text">{{item.unfinishedReason}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{totalCount === 0}}">
+    <view class="empty-icon">📊</view>
+    <text class="empty-text">暂无历史记录</text>
+    <text class="empty-desc">完成任务后，记录将显示在这里</text>
+  </view>
+</view>

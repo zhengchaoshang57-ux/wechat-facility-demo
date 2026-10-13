@@ -1,0 +1,746 @@
+<!--pages/PLANT_A_CLEANING/statistics/statistics.wxml-->
+<view class="container">
+  <!-- 顶部标题栏 -->
+  <view class="header">
+    <view class="header-left">
+      <text class="back-btn" bindtap="goBack">⬅</text>
+    </view>
+    <text class="header-title">保洁统计</text>
+    <view class="header-right">
+      <text class="export-btn" bindtap="exportToExcel">导出</text>
+      <text class="refresh-btn" bindtap="refreshData">刷新</text>
+    </view>
+  </view>
+
+  <view class="export-all-section" bindtap="exportAllStatistics">
+    <text class="export-all-text">📊 导出完整统计报表</text>
+  </view>
+
+  <!-- 统计概览 -->
+  <view class="stats-overview">
+    <view class="stat-card">
+      <text class="stat-number">{{totalStats.total}}</text>
+      <text class="stat-label">总工单</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{totalStats.completed}}</text>
+      <text class="stat-label">已完成</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{totalStats.urgent}}</text>
+      <text class="stat-label">紧急工单</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{totalStats.inProgress}}</text>
+      <text class="stat-label">进行中</text>
+    </view>
+  </view>
+
+  <!-- 标签页切换 -->
+  <view class="tabs">
+    <view class="tab {{currentTab === 'today' ? 'active' : ''}}" bindtap="switchTab" data-tab="today">
+      <text>今日统计</text>
+    </view>
+    <view class="tab {{currentTab === 'week' ? 'active' : ''}}" bindtap="switchTab" data-tab="week">
+      <text>本周统计</text>
+    </view>
+    <view class="tab {{currentTab === 'month' ? 'active' : ''}}" bindtap="switchTab" data-tab="month">
+      <text>本月统计</text>
+    </view>
+  </view>
+
+  <!-- 今日统计标签页 -->
+  <view class="tab-content" wx:if="{{currentTab === 'today'}}">
+    <scroll-view class="content-scroll" scroll-y="true" style="height: {{scrollHeight}}px;">
+      
+      <!-- 按来源统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">按来源统计</text>
+          <text class="section-count">总计：{{todayStats.total || 0}} (最大: 20)</text>
+        </view>
+        
+        <block wx:for="{{sourceOptions}}" wx:key="*this">
+          <view class="chart-section">
+            <view class="chart-title">
+              <text>{{item}}</text>
+              <text class="chart-count">{{todayStats.data[item] || 0}}</text>
+            </view>
+            <view class="bar-chart">
+              <view class="bar-container">
+                <view class="bar-fill" style="width: {{((todayStats.data[item] || 0) / 20) * 100}}%; background-color: #ff6b6b;"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 按问题区域统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">按问题区域统计</text>
+          <text class="section-count">总计：{{todayStats.areaTotal || 0}} (最大: 20)</text>
+        </view>
+        
+        <block wx:for="{{areaOptions}}" wx:key="*this">
+          <view class="chart-section">
+            <view class="chart-title">
+              <text>{{item}}</text>
+              <text class="chart-count">{{todayStats.areaData[item] || 0}}</text>
+            </view>
+            <view class="bar-chart">
+              <view class="bar-container">
+                <view class="bar-fill" style="width: {{((todayStats.areaData[item] || 0) / 20) * 100}}%; background-color: #40cf58;"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 按问题类型统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">按问题类型统计</text>
+          <text class="section-count">总计：{{todayStats.problemTotal || 0}} (最大: 20)</text>
+        </view>
+        
+        <block wx:for="{{problemOptions}}" wx:key="*this">
+          <view class="chart-section">
+            <view class="chart-title">
+              <text>{{item}}</text>
+              <text class="chart-count">{{todayStats.problemData[item] || 0}}</text>
+            </view>
+            <view class="bar-chart">
+              <view class="bar-container">
+                <view class="bar-fill" style="width: {{((todayStats.problemData[item] || 0) / 20) * 100}}%; background-color: #45b7d1;"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 按问题分类统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">按问题分类统计</text>
+          <text class="section-count">总计：{{todayStats.problemTypeTotal || 0}} (最大：20)</text>
+        </view>
+
+        <block wx:for="{{problemTypeOptions}}" wx:key="*this">
+          <view class="chart-section">
+            <view class="chart-title">
+              <text>{{item}}</text>
+              <text class="chart-count">{{todayStats.problemTypeData[item] || 0}}</text>
+            </view>
+            <view class="bar-chart">
+              <view class="bar-container">
+                <view class="bar-fill" style="width: {{((todayStats.problemTypeData[item] || 0) / 20) * 100}}%; background-color: #ffa726;"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 子区域详细统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">子区域详细统计</text>
+          <text class="section-count">点击展开查看详情</text>
+        </view>
+        
+        <!-- 室外子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="室外">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['室外'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">室外区域</text>
+            </view>
+            <text class="sub-area-total">{{todayStats.areaData['室外'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['室外']}}">
+            <block wx:for="{{subAreaMap['室外']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{todayStats.subAreaData['室外'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((todayStats.subAreaData['室外'][item] || 0) / 20) * 100}}%; background-color: #ff9800;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 一楼子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="一楼">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['一楼'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">一楼区域</text>
+            </view>
+            <text class="sub-area-total">{{todayStats.areaData['一楼'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['一楼']}}">
+            <block wx:for="{{subAreaMap['一楼']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{todayStats.subAreaData['一楼'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((todayStats.subAreaData['一楼'][item] || 0) / 20) * 100}}%; background-color: #4CAF50;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 一夹层子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="一夹层">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['一夹层'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">一夹层区域</text>
+            </view>
+            <text class="sub-area-total">{{todayStats.areaData['一夹层'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['一夹层']}}">
+            <block wx:for="{{subAreaMap['一夹层']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{todayStats.subAreaData['一夹层'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((todayStats.subAreaData['一夹层'][item] || 0) / 20) * 100}}%; background-color: #2196F3;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 二楼子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="二楼">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['二楼'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">二楼区域</text>
+            </view>
+            <text class="sub-area-total">{{todayStats.areaData['二楼'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['二楼']}}">
+            <block wx:for="{{subAreaMap['二楼']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{todayStats.subAreaData['二楼'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((todayStats.subAreaData['二楼'][item] || 0) / 20) * 100}}%; background-color: #9C27B0;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 二夹层子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="二夹层">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['二夹层'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">二夹层区域</text>
+            </view>
+            <text class="sub-area-total">{{todayStats.areaData['二夹层'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['二夹层']}}">
+            <block wx:for="{{subAreaMap['二夹层']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{todayStats.subAreaData['二夹层'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((todayStats.subAreaData['二夹层'][item] || 0) / 20) * 100}}%; background-color: #FF5722;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+  <!-- 本周统计标签页 -->
+  <view class="tab-content" wx:if="{{currentTab === 'week'}}">
+    <scroll-view class="content-scroll" scroll-y="true" style="height: {{scrollHeight}}px;">
+      
+      <!-- 按来源统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">按来源统计</text>
+          <text class="section-count">总计：{{weekStats.total || 0}} (最大: 100)</text>
+        </view>
+        
+        <block wx:for="{{sourceOptions}}" wx:key="*this">
+          <view class="chart-section">
+            <view class="chart-title">
+              <text>{{item}}</text>
+              <text class="chart-count">{{weekStats.data[item] || 0}}</text>
+            </view>
+            <view class="bar-chart">
+              <view class="bar-container">
+                <view class="bar-fill" style="width: {{((weekStats.data[item] || 0) / 100) * 100}}%; background-color: #ffa726;"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 按问题区域统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">按问题区域统计</text>
+          <text class="section-count">总计：{{weekStats.areaTotal || 0}} (最大: 100)</text>
+        </view>
+        
+        <block wx:for="{{areaOptions}}" wx:key="*this">
+          <view class="chart-section">
+            <view class="chart-title">
+              <text>{{item}}</text>
+              <text class="chart-count">{{weekStats.areaData[item] || 0}}</text>
+            </view>
+            <view class="bar-chart">
+              <view class="bar-container">
+                <view class="bar-fill" style="width: {{((weekStats.areaData[item] || 0) / 100) * 100}}%; background-color: #ab47bc;"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 按问题类型统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">按问题类型统计</text>
+          <text class="section-count">总计：{{weekStats.problemTotal || 0}} (最大: 100)</text>
+        </view>
+        
+        <block wx:for="{{problemOptions}}" wx:key="*this">
+          <view class="chart-section">
+            <view class="chart-title">
+              <text>{{item}}</text>
+              <text class="chart-count">{{weekStats.problemData[item] || 0}}</text>
+            </view>
+            <view class="bar-chart">
+              <view class="bar-container">
+                <view class="bar-fill" style="width: {{((weekStats.problemData[item] || 0) / 100) * 100}}%; background-color: #26c6da;"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 按问题分类统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">按问题分类统计</text>
+          <text class="section-count">总计：{{weekStats.problemTypeTotal || 0}} (最大：100)</text>
+        </view>
+
+        <block wx:for="{{problemTypeOptions}}" wx:key="*this">
+          <view class="chart-section">
+            <view class="chart-title">
+              <text>{{item}}</text>
+              <text class="chart-count">{{weekStats.problemTypeData[item] || 0}}</text>
+            </view>
+            <view class="bar-chart">
+              <view class="bar-container">
+                <view class="bar-fill" style="width: {{((weekStats.problemTypeData[item] || 0) / 100) * 100}}%; background-color: #ffa726;"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 子区域详细统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">子区域详细统计</text>
+          <text class="section-count">点击展开查看详情</text>
+        </view>
+        
+        <!-- 室外子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="室外">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['室外'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">室外区域</text>
+            </view>
+            <text class="sub-area-total">{{weekStats.areaData['室外'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['室外']}}">
+            <block wx:for="{{subAreaMap['室外']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{weekStats.subAreaData['室外'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((weekStats.subAreaData['室外'][item] || 0) / 20) * 100}}%; background-color: #ff9800;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 一楼子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="一楼">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['一楼'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">一楼区域</text>
+            </view>
+            <text class="sub-area-total">{{weekStats.areaData['一楼'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['一楼']}}">
+            <block wx:for="{{subAreaMap['一楼']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{weekStats.subAreaData['一楼'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((weekStats.subAreaData['一楼'][item] || 0) / 20) * 100}}%; background-color: #4CAF50;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 一夹层子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="一夹层">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['一夹层'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">一夹层区域</text>
+            </view>
+            <text class="sub-area-total">{{weekStats.areaData['一夹层'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['一夹层']}}">
+            <block wx:for="{{subAreaMap['一夹层']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{weekStats.subAreaData['一夹层'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((weekStats.subAreaData['一夹层'][item] || 0) / 20) * 100}}%; background-color: #2196F3;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 二楼子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="二楼">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['二楼'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">二楼区域</text>
+            </view>
+            <text class="sub-area-total">{{weekStats.areaData['二楼'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['二楼']}}">
+            <block wx:for="{{subAreaMap['二楼']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{weekStats.subAreaData['二楼'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((weekStats.subAreaData['二楼'][item] || 0) / 20) * 100}}%; background-color: #9C27B0;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 二夹层子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="二夹层">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['二夹层'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">二夹层区域</text>
+            </view>
+            <text class="sub-area-total">{{weekStats.areaData['二夹层'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['二夹层']}}">
+            <block wx:for="{{subAreaMap['二夹层']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{weekStats.subAreaData['二夹层'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((weekStats.subAreaData['二夹层'][item] || 0) / 20) * 100}}%; background-color: #FF5722;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 本月统计标签页 -->
+  <view class="tab-content" wx:if="{{currentTab === 'month'}}">
+    <scroll-view class="content-scroll" scroll-y="true" style="height: {{scrollHeight}}px;">
+      
+      <!-- 按来源统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">按来源统计</text>
+          <text class="section-count">总计：{{monthStats.total || 0}} (最大: 1000)</text>
+        </view>
+        
+        <block wx:for="{{sourceOptions}}" wx:key="*this">
+          <view class="chart-section">
+            <view class="chart-title">
+              <text>{{item}}</text>
+              <text class="chart-count">{{monthStats.data[item] || 0}}</text>
+            </view>
+            <view class="bar-chart">
+              <view class="bar-container">
+                <view class="bar-fill" style="width: {{((monthStats.data[item] || 0) / 1000) * 100}}%; background-color: #66bb6a;"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 按问题区域统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">按问题区域统计</text>
+          <text class="section-count">总计：{{monthStats.areaTotal || 0}} (最大: 1000)</text>
+        </view>
+        
+        <block wx:for="{{areaOptions}}" wx:key="*this">
+          <view class="chart-section">
+            <view class="chart-title">
+              <text>{{item}}</text>
+              <text class="chart-count">{{monthStats.areaData[item] || 0}}</text>
+            </view>
+            <view class="bar-chart">
+              <view class="bar-container">
+                <view class="bar-fill" style="width: {{((monthStats.areaData[item] || 0) / 1000) * 100}}%; background-color: #ff9800;"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 按问题类型统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">按问题类型统计</text>
+          <text class="section-count">总计：{{monthStats.problemTotal || 0}} (最大: 1000)</text>
+        </view>
+        
+        <block wx:for="{{problemOptions}}" wx:key="*this">
+          <view class="chart-section">
+            <view class="chart-title">
+              <text>{{item}}</text>
+              <text class="chart-count">{{monthStats.problemData[item] || 0}}</text>
+            </view>
+            <view class="bar-chart">
+              <view class="bar-container">
+                <view class="bar-fill" style="width: {{((monthStats.problemData[item] || 0) / 1000) * 100}}%; background-color: #9c27b0;"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 按问题分类统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">按问题分类统计</text>
+          <text class="section-count">总计：{{monthStats.problemTypeTotal || 0}} (最大：1000)</text>
+        </view>
+
+        <block wx:for="{{problemTypeOptions}}" wx:key="*this">
+          <view class="chart-section">
+            <view class="chart-title">
+              <text>{{item}}</text>
+              <text class="chart-count">{{monthStats.problemTypeData[item] || 0}}</text>
+            </view>
+            <view class="bar-chart">
+              <view class="bar-container">
+            <view class="bar-fill" style="width: {{((monthStats.problemTypeData[item] || 0) / 1000) * 100}}%; background-color: #ffa726;"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 子区域详细统计 -->
+      <view class="category-section">
+        <view class="section-header">
+          <text class="section-title">子区域详细统计</text>
+          <text class="section-count">点击展开查看详情</text>
+        </view>
+        
+        <!-- 室外子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="室外">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['室外'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">室外区域</text>
+            </view>
+            <text class="sub-area-total">{{monthStats.areaData['室外'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['室外']}}">
+            <block wx:for="{{subAreaMap['室外']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{monthStats.subAreaData['室外'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((monthStats.subAreaData['室外'][item] || 0) / 20) * 100}}%; background-color: #ff9800;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 一楼子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="一楼">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['一楼'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">一楼区域</text>
+            </view>
+            <text class="sub-area-total">{{monthStats.areaData['一楼'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['一楼']}}">
+            <block wx:for="{{subAreaMap['一楼']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{monthStats.subAreaData['一楼'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((monthStats.subAreaData['一楼'][item] || 0) / 20) * 100}}%; background-color: #4CAF50;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 一夹层子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="一夹层">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['一夹层'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">一夹层区域</text>
+            </view>
+            <text class="sub-area-total">{{monthStats.areaData['一夹层'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['一夹层']}}">
+            <block wx:for="{{subAreaMap['一夹层']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{monthStats.subAreaData['一夹层'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((monthStats.subAreaData['一夹层'][item] || 0) / 20) * 100}}%; background-color: #2196F3;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 二楼子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="二楼">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['二楼'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">二楼区域</text>
+            </view>
+            <text class="sub-area-total">{{monthStats.areaData['二楼'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['二楼']}}">
+            <block wx:for="{{subAreaMap['二楼']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{monthStats.subAreaData['二楼'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((monthStats.subAreaData['二楼'][item] || 0) / 20) * 100}}%; background-color: #9C27B0;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+        
+        <!-- 二夹层子区域 -->
+        <view class="sub-area-section">
+          <view class="sub-area-header" bindtap="toggleSubArea" data-area="二夹层">
+            <view class="sub-area-title">
+              <text class="sub-area-icon">{{expandedAreas['二夹层'] ? '▼' : '▶'}}</text>
+              <text class="sub-area-name">二夹层区域</text>
+            </view>
+            <text class="sub-area-total">{{monthStats.areaData['二夹层'] || 0}}个工单</text>
+          </view>
+          <view class="sub-area-content" wx:if="{{expandedAreas['二夹层']}}">
+            <block wx:for="{{subAreaMap['二夹层']}}" wx:key="*this">
+              <view class="sub-area-chart-section">
+                <view class="sub-area-chart-title">
+                  <text>{{item}}</text>
+                  <text class="sub-area-chart-count">{{monthStats.subAreaData['二夹层'][item] || 0}}</text>
+                </view>
+                <view class="bar-chart">
+                  <view class="bar-container">
+                    <view class="bar-fill" style="width: {{((monthStats.subAreaData['二夹层'][item] || 0) / 20) * 100}}%; background-color: #FF5722;"></view>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>

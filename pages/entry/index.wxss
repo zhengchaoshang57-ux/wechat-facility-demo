@@ -1,0 +1,40 @@
+/* pages/entry/index.wxss */
+.container {
+  padding: 40rpx;
+  text-align: center;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 60rpx;
+  color: #333;
+}
+
+.center-btn {
+  width: 80%;
+  height: 120rpx;
+  line-height: 120rpx;
+  border-radius: 20rpx;
+  margin: 30rpx auto;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: white;
+  border: none;
+}
+
+.plant-a-repair-btn {
+  background: linear-gradient(135deg, #4A90E2, #357ABD);
+}
+
+.plant-a-cleaning-btn {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+}
+
+.plant-b-repair-btn {
+  background: linear-gradient(135deg, #4A90E2, #357ABD);
+}
+
+.plant-b-cleaning-btn {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+}

@@ -1,0 +1,577 @@
+/* pages/PLANT_A_REPAIR/technician-todo/technician-todo.wxss */
+.container {
+  min-height: 100vh;
+  background-color: #f5f6fa;
+}
+
+/* 头部样式 */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 30rpx;
+  background: white;
+  border-bottom: 1rpx solid #eee;
+}
+
+.header-left {
+  width: 60rpx;
+}
+
+.back-btn {
+  font-size: 36rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.logout-btn {
+  font-size: 28rpx;
+  color: #FF3B30;
+}
+
+/* 统计信息 */
+.stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 30rpx;
+  background: white;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-number {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 任务列表 */
+.task-list {
+  padding: 0 20rpx 20rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin: 30rpx 0 20rpx;
+  padding-left: 10rpx;
+  border-left: 6rpx solid #007AFF;
+}
+
+/* 任务卡片 */
+.task-card {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  border-left: 8rpx solid;
+}
+
+.task-card.pending {
+  border-left-color: #FF9500;
+}
+
+.task-card.in-progress {
+  border-left-color: #007AFF;
+}
+
+.task-card.completed {
+  border-left-color: #34C759;
+  opacity: 0.8;
+}
+
+.task-card.unfinished {
+  border-left-color: #FF9500;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+
+.task-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  flex: 1;
+  margin-right: 20rpx;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.task-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  align-items: flex-end;
+}
+
+.priority-badge {
+  font-size: 20rpx;
+  padding: 6rpx 12rpx;
+  border-radius: 12rpx;
+  white-space: nowrap;
+}
+
+.priority-badge.urgent {
+  background: #ffece5;
+  color: #ff6b35;
+}
+
+.priority-badge.normal {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+
+.unfinished-badge {
+  font-size: 20rpx;
+  padding: 6rpx 12rpx;
+  border-radius: 12rpx;
+  background: #fff3cd;
+  color: #856404;
+  border: 1rpx solid #ffeaa7;
+  white-space: nowrap;
+}
+
+/* 新增：三个字段信息组 */
+.task-info-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-bottom: 12rpx;
+}
+
+.task-info {
+  font-size: 22rpx;
+  color: #555;
+  background: #f8f9fa;
+  padding: 6rpx 12rpx;
+  border-radius: 16rpx;
+  border: 1rpx solid #eee;
+}
+
+.task-content {
+  margin-bottom: 25rpx;
+}
+
+.task-desc {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 15rpx;
+  display: block;
+}
+
+/* 新增：图片显示样式 */
+.task-images {
+  margin-bottom: 15rpx;
+  border-top: 1rpx solid #eee;
+  padding-top: 15rpx;
+}
+
+.images-title {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  font-weight: bold;
+}
+
+.images-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.task-image {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 8rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.1);
+  border: 1rpx solid #eee;
+  overflow: hidden;
+}
+
+.task-image:active {
+  opacity: 0.8;
+}
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 10rpx;
+  padding-top: 15rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.task-time, .task-assignee {
+  font-size: 22rpx;
+  color: #999;
+  margin-bottom: 5rpx;
+}
+
+.unfinished-reason {
+  padding: 12rpx;
+  background: #fff8e1;
+  border-radius: 8rpx;
+  margin-top: 10rpx;
+  border-left: 4rpx solid #FFC107;
+}
+
+.reason-label {
+  font-size: 24rpx;
+  color: #856404;
+  font-weight: bold;
+  margin-right: 10rpx;
+}
+
+.reason-text {
+  font-size: 24rpx;
+  color: #856404;
+  line-height: 1.4;
+}
+
+/* 任务操作 */
+.task-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-btn {
+  padding: 16rpx 32rpx;
+  border-radius: 25rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+.start-btn {
+  background: #007AFF;
+  color: white;
+}
+
+.unfinished-btn {
+  background: #FF9500;
+  color: white;
+  margin-right: 20rpx;
+}
+
+.complete-btn {
+  background: #34C759;
+  color: white;
+}
+
+.completed-text {
+  font-size: 26rpx;
+  color: #34C759;
+  font-weight: 500;
+  padding: 16rpx 0;
+}
+
+.unfinished-text {
+  font-size: 26rpx;
+  color: #FF9500;
+  font-weight: 500;
+  padding: 16rpx 0;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.task-creator {
+  font-size: 22rpx;
+  color: #1a73e8;
+  margin-bottom: 5rpx;
+  flex-basis: 100%;
+}
+
+/* 弹窗样式 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.upload-modal {
+  width: 85%;
+  max-height: 80%;
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.modal-close {
+  font-size: 24px;
+  color: #999;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.modal-content {
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.upload-tip {
+  display: block;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* 图片选择区域 */
+.selected-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.image-item {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.selected-image {
+  width: 100%;
+  height: 100%;
+}
+
+.image-delete {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  background-color: #ff4444;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.add-iamge-btn {
+  width: 80px;
+  height: 80px;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.add-image-btn:active {
+  background-color: #f5f5f5;
+}
+
+.add-icon {
+  font-size: 24px;
+  color: #007AFF;
+  margin-bottom: 5px;
+}
+
+.add-text {
+  font-size: 12px;
+  color: #666;
+}
+
+.image-count {
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+}
+
+/* 上传进度 */
+.upload-progress {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.progress-bar {
+  height: 6px;
+  background-color: #e9ecef;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #28a745;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  display: block;
+}
+
+/* 按钮区域 */
+.upload-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-cance,
+.btn-confirm {
+  flex: 1;
+  height: 44px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-cancel {
+  background-color: #f8f9fa;
+  color: #666;
+  border: 1px solid #dee2e6;
+}
+
+.btn-cancel:active {
+  background-color: #e9ecef;
+}
+
+.btn-confirm {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-confirm:active {
+  background-color: #218838;
+}
+
+.btn-confirm[disabled] {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* 阻止事件冒泡 */
+.stop-propagation {
+  pointer-events: auto;
+}
+
+/* 已完成任务的特殊样式 */
+.completed-badge {
+  background-color: #28a745;
+  color: white;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+.task-completed-by {
+  font-size: 13px;
+  color: #28a745;
+  margin-top: 5px;
+  display: block;
+}

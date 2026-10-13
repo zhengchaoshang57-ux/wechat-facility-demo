@@ -1,0 +1,397 @@
+/* pages/PLANT_A_REPAIR/history/history.wxss */
+.container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 30rpx;
+  background: white;
+  border-bottom: 1rpx solid #eee;
+  flex-shrink: 0;
+}
+
+.header-left, .header-right {
+  width: 80rpx;
+}
+
+.back-btn {
+  font-size: 36rpx;
+  color: #1a73e8;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.filter-btn {
+  font-size: 28rpx;
+  color: #1a73e8;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  padding: 30rpx 0;
+  margin-bottom: 20rpx;
+  flex-shrink: 0;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.stat-item:nth-child(1) .stat-number { color: #666; }
+.stat-item:nth-child(2) .stat-number { color: #34a853; }
+.stat-item:nth-child(3) .stat-number { color: #ff6b35; }
+
+.stat-label {
+  font-size: 22rpx;
+  color: #666;
+}
+
+.history-list {
+  flex: 1;
+  padding: 0 20rpx 20rpx;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin: 25rpx 0 15rpx;
+  padding-left: 10rpx;
+  border-left: 6rpx solid #1a73e8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sub-count {
+  font-size: 24rpx;
+  color: #666;
+  font-weight: normal;
+}
+
+.sub-section {
+  margin-bottom: 25rpx;
+}
+
+.sub-section-title {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #34a853;
+  display: block;
+  margin-bottom: 12rpx;
+  padding-left: 15rpx;
+  border-left: 4rpx solid #34a853;
+}
+
+.sub-section-title.unfinished {
+  color: #ff6b35;
+  border-left-color: #ff6b35;
+}
+
+.record-item {
+  background: white;
+  border-radius: 12rpx;
+  padding: 25rpx;
+  margin-bottom: 15rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.record-item.completed {
+  border-left: 4rpx solid #34a853;
+}
+
+.record-item.unfinished {
+  border-left: 4rpx solid #ff6b35;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15rpx;
+}
+
+.record-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  flex: 1;
+  margin-right: 15rpx;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.record-status-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.record-status-badge {
+  font-size: 20rpx;
+  padding: 6rpx 12rpx;
+  border-radius: 15rpx;
+  white-space: nowrap;
+  margin-bottom: 8rpx;
+}
+
+.record-status-badge.completed {
+  background: #e7f7ed;
+  color: #34a853;
+}
+
+.record-status-badge.unfinished {
+  background: #ffece5;
+  color: #ff6b35;
+}
+
+/* 信息组样式 */
+.record-info-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-bottom: 12rpx;
+}
+
+.record-subinfo-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-bottom: 15rpx;
+  padding-left: 20rpx;
+  border-left: 3rpx solid #e8f0fe;
+}
+
+.record-info {
+  font-size: 22rpx;
+  color: #555;
+  background: #f8f9fa;
+  padding: 6rpx 12rpx;
+  border-radius: 16rpx;
+  border: 1rpx solid #eee;
+  line-height: 1.4;
+}
+
+/* 统一的时间信息区域样式 */
+.time-info-section {
+  background: #f9f9f9;
+  border-radius: 8rpx;
+  padding: 15rpx;
+  margin-bottom: 15rpx;
+  border-left: 4rpx solid #e0e0e0;
+}
+
+.time-info-row {
+  display: flex;
+  margin-bottom: 8rpx;
+  align-items: flex-start;
+}
+
+.time-info-row:last-child {
+  margin-bottom: 0;
+}
+
+.time-info-row.completed-time {
+  border-top: 1rpx solid #e0e0e0;
+  padding-top: 8rpx;
+  margin-top: 8rpx;
+}
+
+.time-info-row.unfinished-time {
+  border-top: 1rpx solid #e0e0e0;
+  padding-top: 8rpx;
+  margin-top: 8rpx;
+}
+
+.time-label {
+  font-size: 22rpx;
+  color: #666;
+  font-weight: 500;
+  width: 140rpx;
+  flex-shrink: 0;
+}
+
+.time-value {
+  font-size: 22rpx;
+  color: #333;
+  flex: 1;
+  word-break: break-all;
+  line-height: 1.4;
+}
+
+.time-info-row.completed-time .time-value {
+  color: #34a853;
+  font-weight: 500;
+}
+
+.time-info-row.unfinished-time .time-value {
+  color: #ff6b35;
+  font-weight: 500;
+}
+
+.record-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 15rpx;
+  line-height: 1.4;
+  word-break: break-word;
+  padding: 10rpx 0;
+  border-top: 1rpx solid #eee;
+  border-bottom: 1rpx solid #eee;
+}
+
+/* 人员信息区域样式 */
+.people-info-section {
+  background: #f0f7ff;
+  border-radius: 8rpx;
+  padding: 15rpx;
+  margin-bottom: 15rpx;
+  border-left: 4rpx solid #1a73e8;
+}
+
+.people-info-row {
+  display: flex;
+  margin-bottom: 8rpx;
+  align-items: center;
+}
+
+.people-info-row:last-child {
+  margin-bottom: 0;
+}
+
+.people-label {
+  font-size: 22rpx;
+  color: #666;
+  font-weight: 500;
+  width: 120rpx;
+  flex-shrink: 0;
+}
+
+.people-value {
+  font-size: 22rpx;
+  color: #333;
+  flex: 1;
+  font-weight: 500;
+}
+
+/* 图片显示样式 */
+.record-images {
+  margin-bottom: 15rpx;
+}
+
+.images-title {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  font-weight: bold;
+}
+
+.images-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.record-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 8rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.1);
+  border: 1rpx solid #eee;
+  overflow: hidden;
+}
+
+.record-image:active {
+  opacity: 0.8;
+}
+
+/* 未完成原因样式 */
+.unfinished-reason {
+  background: #fff8e5;
+  border-radius: 8rpx;
+  padding: 15rpx;
+  border-left: 4rpx solid #ffc107;
+}
+
+.reason-label {
+  font-size: 22rpx;
+  color: #ff9800;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5rpx;
+}
+
+.reason-text {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* 优先级标签 */
+.priority-tag {
+  font-size: 20rpx;
+  padding: 4rpx 10rpx;
+  border-radius: 15rpx;
+}
+
+.priority-tag.urgent {
+  background: #ffece5;
+  color: #ff6b35;
+}
+
+.priority-tag.normal {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 100rpx 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 25rpx;
+}
+
+.empty-text {
+  display: block;
+  font-size: 32rpx;
+  color: #666;
+  margin-bottom: 15rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #999;
+}

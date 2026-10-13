@@ -1,0 +1,500 @@
+<!--pages/PLANT_B_CLEANING/task-assign/task-assign.wxml-->
+<view class="container">
+  <!-- 顶部标题栏 -->
+  <view class="header">
+    <view class="header-left">
+      <text class="back-btn" bindtap="goBack">←</text>
+    </view>
+    <text class="header-title">任务分配中心</text>
+    <view class="header-right">
+      <text class="logout-btn" bindtap="logout">退出</text>
+    </view>
+  </view>
+
+  <!-- 统计概览 -->
+  <view class="stats-overview">
+    <view class="stat-card">
+      <text class="stat-number">{{stats.pending}}</text>
+      <text class="stat-label">待分配</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{stats.assigned}}</text>
+      <text class="stat-label">已分配</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{stats.inProgress}}</text>
+      <text class="stat-label">进行中</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{stats.completed}}</text>
+      <text class="stat-label">已完成</text>
+    </view>
+  </view>
+
+  <!-- 任务类型切换按钮 -->
+  <view class="task-type-tabs">
+    <view class="tab-btn {{currentTab === 'unassigned' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="unassigned">
+      <text class="tab-icon">📋</text>
+      <text class="tab-text">待分配</text>
+      <text class="tab-badge" wx:if="{{stats.pending > 0}}">{{stats.pending}}</text>
+    </view>
+
+    <view class="tab-btn {{currentTab === 'assigned' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="assigned">
+      <text class="tab-icon">👤</text>
+      <text class="tab-text">已分配</text>
+      <text class="tab-badge" wx:if="{{stats.assigned > 0}}">{{stats.assigned}}</text>
+    </view>
+    
+    <view class="tab-btn {{currentTab === 'inProgress' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="inProgress">
+      <text class="tab-icon">🔄</text>
+      <text class="tab-text">进行中</text>
+      <text class="tab-badge" wx:if="{{stats.inProgress > 0}}">{{stats.inProgress}}</text>
+    </view>
+    
+    <view class="tab-btn {{currentTab === 'completed' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="completed">
+      <text class="tab-icon">✅</text>
+      <text class="tab-text">已完成</text>
+      <text class="tab-badge" wx:if="{{stats.completed > 0}}">{{stats.completed}}</text>
+    </view>
+  </view>
+
+  <!-- 待分配任务标签页 -->
+  <view class="tab-content" wx:if="{{currentTab === 'unassigned'}}">
+    <!-- 批量操作栏 -->
+    <view class="batch-actions" wx:if="{{unassignedTasks.length > 0}}">
+      <view class="batch-select">
+        <text class="select-all-text" bindtap="toggleSelectAll">
+          {{selectAll ? '取消全选' : '全选'}}
+        </text>
+        <text class="selected-count">已选择 {{selectedTasks.length}} 个</text>
+      </view>
+      <button class="batch-assign-btn" bindtap="showHousekeeperList" disabled="{{selectedTasks.length === 0}}">
+        批量分配
+      </button>
+    </view>
+
+    <!-- 待分配任务列表 -->
+    <scroll-view class="task-list" scroll-y="true" style="height: {{scrollHeight}}px;">
+      <block wx:for="{{unassignedTasks}}" wx:key="id">
+        <view class="task-card unassigned">
+          <!-- 多选框 -->
+          <view class="task-checkbox {{selectedTasks.indexOf(item.id) !== -1 ? 'checked' : ''}}"
+                bindtap="toggleTaskSelect" data-id="{{item.id}}">
+            <text class="checkmark" wx:if="{{selectedTasks.indexOf(item.id) !== -1}}">✓</text>
+          </view>
+          
+          <view class="task-content">
+            <view class="task-header">
+              <text class="task-title">{{item.title}}</text>
+              <!-- 优先级选择按钮 -->
+              <view class="priority-actions">
+                <text class="priority-badge {{item.priority === 'high' ? 'urgent' : 'normal'}}">
+                  {{item.priority === 'high' ? '紧急' : '普通'}}
+                </text>
+                <text class="priority-change-btn" bindtap="showPriorityModal" data-task="{{item}}">
+                  修改
+                </text>
+              </view>
+            </view>
+            
+            <!-- 详细信息显示区域 -->
+            <view class="task-detail-group">
+              <view class="detail-row">
+                <text class="detail-label">来源：</text>
+                <text class="detail-value">{{item.source || '未选择'}}</text>
+              </view>
+              
+              <view class="detail-row">
+                <text class="detail-label">问题区域：</text>
+                <text class="detail-value">
+                  {{item.problemArea === '其他' ? (item.otherAreaDescription || '其他') : (item.problemArea || '未选择')}}
+                </text>
+              </view>
+              
+              <view class="detail-row" wx:if="{{item.subArea}}">
+                <text class="detail-label">具体位置：</text>
+                <text class="detail-value">
+                  {{item.subArea === '其他' ? (item.otherSubAreaDescription || '其他') : item.subArea}}
+                  <text wx:if="{{item.problem === '门' && item.doorNumber}}"> - {{item.doorNumber}}</text>
+                </text>
+              </view>
+              
+              <view class="detail-row">
+                <text class="detail-label">问题：</text>
+                <text class="detail-value">{{item.problem || '未选择'}}</text>
+              </view>
+              
+              <!-- 添加问题分类显示 -->
+              <view class="detail-row" wx:if="{{item.problemType && item.problemType !== '未选择'}}">
+                <text class="detail-label">问题分类：</text>
+                <text class="detail-value problem-type-value">{{item.problemType}}</text>
+              </view>
+            </view>
+            
+            <text class="task-desc">{{item.description || '无描述'}}</text>
+            
+            <view class="task-images" wx:if="{{item.images && item.images.length > 0}}">
+              <view class="images-title">相关图片 ({{item.images.length}}张)</view>
+              <view class="images-list">
+                <block wx:for="{{item.images}}" wx:key="index">
+                  <image class="task-image" 
+                         src="{{item}}" 
+                         mode="aspectFill" 
+                         bindtap="previewImage" 
+                         data-id="{{item.id}}" 
+                         data-index="{{index}}"></image>
+                </block>
+              </view>
+            </view>
+            
+            <view class="task-footer">
+              <text class="task-creator">创建人：{{item.creator || '未知'}}</text>
+              <text class="task-time">创建时间：{{item.createTime}}</text>
+            </view>
+          </view>
+          
+          <!-- 分配按钮 -->
+          <view class="task-actions">
+            <button class="action-btn assign-btn" bindtap="assignSingleTask" data-task="{{item}}">
+              分配
+            </button>
+          </view>
+        </view>
+      </block>
+
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{unassignedTasks.length === 0}}">
+        <view class="empty-icon">✅</view>
+        <text class="empty-text">暂无待分配任务</text>
+        <text class="empty-desc">所有任务都已分配完成</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 已分配任务标签页 -->
+  <view class="tab-content" wx:if="{{currentTab === 'assigned'}}">
+    <view class="assigned-header">
+      <text class="section-title">已分配任务</text>
+      <text class="section-count">{{assignedTasks.length}}个任务</text>
+    </view>
+
+    <scroll-view class="task-list" scroll-y="true" style="height: {{scrollHeight}}px;">
+      <block wx:for="{{assignedTasks}}" wx:key="id">
+        <view class="task-card assigned">
+          <view class="task-content">
+            <view class="task-header">
+              <text class="task-title">{{item.title}}</text>
+              <view class="task-badges">
+                <text class="priority-badge {{item.priority === 'high' ? 'urgent' : 'normal'}}">
+                  {{item.priority === 'high' ? '紧急' : '普通'}}
+                </text>
+                <text class="technician-badge">👤 {{item.assignee || '未分配'}}</text>
+                <text class="task-state-badge assigned">已分配</text>
+              </view>
+            </view>
+            
+            <!-- 详细信息显示区域 -->
+            <view class="task-detail-group">
+              <view class="detail-row">
+                <text class="detail-label">来源：</text>
+                <text class="detail-value">{{item.source || '未选择'}}</text>
+              </view>
+              
+              <view class="detail-row">
+                <text class="detail-label">问题区域：</text>
+                <text class="detail-value">
+                  {{item.problemArea === '其他' ? (item.otherAreaDescription || '其他') : (item.problemArea || '未选择')}}
+                </text>
+              </view>
+              
+              <view class="detail-row" wx:if="{{item.subArea}}">
+                <text class="detail-label">具体位置：</text>
+                <text class="detail-value">
+                  {{item.subArea === '其他' ? (item.otherSubAreaDescription || '其他') : item.subArea}}
+                  <text wx:if="{{item.problem === '门' && item.doorNumber}}"> - {{item.doorNumber}}</text>
+                </text>
+              </view>
+              
+              <view class="detail-row">
+                <text class="detail-label">问题：</text>
+                <text class="detail-value">{{item.problem || '未选择'}}</text>
+              </view>
+              
+              <!-- 添加问题分类显示 -->
+              <view class="detail-row" wx:if="{{item.problemType && item.problemType !== '未选择'}}">
+                <text class="detail-label">问题分类：</text>
+                <text class="detail-value problem-type-value">{{item.problemType}}</text>
+              </view>
+            </view>
+            
+            <text class="task-desc">{{item.description || '无描述'}}</text>
+            
+            <view class="task-images" wx:if="{{item.images && item.images.length > 0}}">
+              <view class="images-title">相关图片 ({{item.images.length}}张)</view>
+              <view class="images-list">
+                <block wx:for="{{item.images}}" wx:key="index">
+                  <image class="task-image" 
+                         src="{{item}}" 
+                         mode="aspectFill" 
+                         bindtap="previewImage" 
+                         data-id="{{item.id}}" 
+                         data-index="{{index}}"></image>
+                </block>
+              </view>
+            </view>
+            
+            <view class="task-footer">
+              <text class="task-creator">创建人：{{item.creator || '未知'}}</text>
+              <text class="task-time">创建时间：{{item.createTime}}</text>
+              <text class="task-time">分配时间：{{item.assignedTime || '未记录'}}</text>
+              <text class="task-status assigned">📋 已分配</text>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{assignedTasks.length === 0}}">
+        <view class="empty-icon">👤</view>
+        <text class="empty-text">暂无已分配任务</text>
+        <text class="empty-desc">所有任务都已开始处理</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 进行中任务标签页 -->
+  <view class="tab-content" wx:if="{{currentTab === 'inProgress'}}">
+    <view class="in-progress-header">
+      <text class="section-title">进行中任务监控</text>
+      <text class="section-count">{{inProgressTasks.length}}个任务</text>
+    </view>
+
+    <scroll-view class="task-list" scroll-y="true" style="height: {{scrollHeight}}px;">
+      <block wx:for="{{inProgressTasks}}" wx:key="id">
+        <view class="task-card in-progress">
+          <view class="task-content">
+            <view class="task-header">
+              <text class="task-title">{{item.title}}</text>
+              <view class="task-badges">
+                <text class="priority-badge {{item.priority === 'high' ? 'urgent' : 'normal'}}">
+                  {{item.priority === 'high' ? '紧急' : '普通'}}
+                </text>
+                <text class="housekeeper-badge">👤 {{item.assignee || '未分配'}}</text>
+                <text class="task-state-badge started">进行中</text>
+              </view>
+            </view>
+            
+            <!-- 详细信息显示区域 -->
+            <view class="task-detail-group">
+              <view class="detail-row">
+                <text class="detail-label">来源：</text>
+                <text class="detail-value">{{item.source || '未选择'}}</text>
+              </view>
+              
+              <view class="detail-row">
+                <text class="detail-label">问题区域：</text>
+                <text class="detail-value">
+                  {{item.problemArea === '其他' ? (item.otherAreaDescription || '其他') : (item.problemArea || '未选择')}}
+                </text>
+              </view>
+              
+              <view class="detail-row" wx:if="{{item.subArea}}">
+                <text class="detail-label">具体位置：</text>
+                <text class="detail-value">
+                  {{item.subArea === '其他' ? (item.otherSubAreaDescription || '其他') : item.subArea}}
+                  <text wx:if="{{item.problem === '门' && item.doorNumber}}"> - {{item.doorNumber}}</text>
+                </text>
+              </view>
+              
+              <view class="detail-row">
+                <text class="detail-label">问题：</text>
+                <text class="detail-value">{{item.problem || '未选择'}}</text>
+              </view>
+              
+              <!-- 添加问题分类显示 -->
+              <view class="detail-row" wx:if="{{item.problemType && item.problemType !== '未选择'}}">
+                <text class="detail-label">问题分类：</text>
+                <text class="detail-value problem-type-value">{{item.problemType}}</text>
+              </view>
+            </view>
+            
+            <text class="task-desc">{{item.description || '无描述'}}</text>
+            
+            <view class="task-images" wx:if="{{item.images && item.images.length > 0}}">
+              <view class="images-title">相关图片 ({{item.images.length}}张)</view>
+              <view class="images-list">
+                <block wx:for="{{item.images}}" wx:key="index">
+                  <image class="task-image" 
+                         src="{{item}}" 
+                         mode="aspectFill" 
+                         bindtap="previewImage" 
+                         data-id="{{item.id}}" 
+                         data-index="{{index}}"></image>
+                </block>
+              </view>
+            </view>
+            
+            <view class="task-footer">
+              <text class="task-creator">创建人：{{item.creator || '未知'}}</text>
+              <text class="task-time">创建时间：{{item.createTime}}</text>
+              <text class="task-time" wx:if="{{item.startTime}}">
+                开始时间：{{item.startTime}}
+              </text>
+              <text class="task-status in-progress">🔄 进行中</text>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{inProgressTasks.length === 0}}">
+        <view class="empty-icon">🔍</view>
+        <text class="empty-text">暂无进行中任务</text>
+        <text class="empty-desc">所有任务都已完成或待分配</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 已完成任务标签页 -->
+  <view class="tab-content" wx:if="{{currentTab === 'completed'}}">
+    <view class="completed-header">
+      <text class="section-title">已完成任务</text>
+      <text class="section-count">{{completedTasks.length}}个任务</text>
+    </view>
+
+    <scroll-view class="task-list" scroll-y="true" style="height: {{scrollHeight}}px;">
+      <block wx:for="{{completedTasks}}" wx:key="id">
+        <view class="task-card completed">
+          <view class="task-content">
+            <view class="task-header">
+              <text class="task-title">{{item.title}}</text>
+              <view class="task-badges">
+                <text class="priority-badge {{item.priority === 'high' ? 'urgent' : 'normal'}}">
+                  {{item.priority === 'high' ? '紧急' : '普通'}}
+                </text>
+                <text class="housekeeper-badge">👤 {{item.assignee || '未分配'}}</text>
+              </view>
+            </view>
+            
+            <!-- 详细信息显示区域 -->
+            <view class="task-detail-group">
+              <view class="detail-row">
+                <text class="detail-label">来源：</text>
+                <text class="detail-value">{{item.source || '未选择'}}</text>
+              </view>
+              
+              <view class="detail-row">
+                <text class="detail-label">问题区域：</text>
+                <text class="detail-value">
+                  {{item.problemArea === '其他' ? (item.otherAreaDescription || '其他') : (item.problemArea || '未选择')}}
+                </text>
+              </view>
+              
+              <view class="detail-row" wx:if="{{item.subArea}}">
+                <text class="detail-label">具体位置：</text>
+                <text class="detail-value">
+                  {{item.subArea === '其他' ? (item.otherSubAreaDescription || '其他') : item.subArea}}
+                  <text wx:if="{{item.problem === '门' && item.doorNumber}}"> - {{item.doorNumber}}</text>
+                </text>
+              </view>
+              
+              <view class="detail-row">
+                <text class="detail-label">问题：</text>
+                <text class="detail-value">{{item.problem || '未选择'}}</text>
+              </view>
+              
+              <!-- 添加问题分类显示 -->
+              <view class="detail-row" wx:if="{{item.problemType && item.problemType !== '未选择'}}">
+                <text class="detail-label">问题分类：</text>
+                <text class="detail-value problem-type-value">{{item.problemType}}</text>
+              </view>
+            </view>
+            
+            <text class="task-desc">{{item.description || '无描述'}}</text>
+            
+            <view class="task-images" wx:if="{{item.images && item.images.length > 0}}">
+              <view class="images-title">相关图片 ({{item.images.length}}张)</view>
+              <view class="images-list">
+                <block wx:for="{{item.images}}" wx:key="index">
+                  <image class="task-image" 
+                         src="{{item}}" 
+                         mode="aspectFill" 
+                         bindtap="previewImage" 
+                         data-id="{{item.id}}" 
+                         data-index="{{index}}"></image>
+                </block>
+              </view>
+            </view>
+            
+            <view class="task-footer">
+              <text class="task-creator">创建人：{{item.creator || '未知'}}</text>
+              <text class="task-time">创建时间：{{item.createTime}}</text>
+              <text class="task-time">完成时间：{{item.completedTime}}</text>
+              <text class="task-status completed">✅ 已完成</text>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{completedTasks.length === 0}}">
+        <view class="empty-icon">📊</view>
+        <text class="empty-text">暂无已完成任务</text>
+        <text class="empty-desc">所有任务都在处理中</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 优先级选择弹窗 -->
+  <view class="modal" wx:if="{{showPriorityModal}}">
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">选择优先级</text>
+        <text class="modal-close" bindtap="hidePriorityModal">×</text>
+      </view>
+      <view class="modal-body">
+        <text class="modal-desc">请选择任务优先级：</text>
+        <view class="priority-list">
+          <block wx:for="{{priorityOptions}}" wx:key="value">
+            <view class="priority-item" bindtap="setPriority" data-priority="{{item.value}}">
+              <view class="priority-color" style="background-color: {{item.color}};"></view>
+              <view class="priority-info">
+                <text class="priority-name">{{item.label}}</text>
+              </view>
+              <view class="priority-select">✓</view>
+            </view>
+          </block>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保洁员选择弹窗 -->
+  <view class="modal" wx:if="{{showHousekeeperModal}}">
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">选择保洁员</text>
+        <text class="modal-close" bindtap="hideHousekeeperModal">×</text>
+      </view>
+      <view class="modal-body">
+        <text class="modal-desc">将选中的 {{selectedTasks.length}} 个任务分配给：</text>
+        <view class="housekeeper-list">
+          <block wx:for="{{availableHousekeepers}}" wx:key="*this">
+            <view class="housekeeper-item" bindtap="assignToHousekeeper" data-housekeeper="{{item}}">
+              <view class="housekeeper-avatar">👩‍🔧</view>
+              <view class="housekeeper-info">
+                <text class="housekeeper-name">{{item}}</text>
+                <text class="housekeeper-status">当前任务: {{housekeeperStats[item] || 0}}个</text>
+              </view>
+              <view class="housekeeper-select">✓</view>
+            </view>
+          </block>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

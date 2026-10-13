@@ -1,0 +1,431 @@
+/* pages/PLANT_A_REPAIR/dispatcher/dispatcher.wxss */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding-bottom: 120rpx;
+}
+
+/* 头部样式 */
+.header {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  padding: 60rpx 40rpx 100rpx;
+  border-radius: 0 0 40rpx 40rpx;
+  box-shadow: 0 4rpx 24rpx rgba(59, 130, 246, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.header-title-section {
+  flex: 1;
+}
+
+.greeting {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 12rpx;
+}
+
+.welcome {
+  display: block;
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+  opacity: 0.9;
+}
+
+.user-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  backdrop-filter: blur(10rpx);
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+}
+
+/* 主功能区域 */
+.main-section {
+  padding: 0 40rpx;
+  margin-top: -60rpx;
+  position: relative;
+  z-index: 2;
+}
+
+.main-card {
+  background: white;
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1rpx solid #e2e8f0;
+}
+
+.main-card:active {
+  transform: translateY(-4rpx);
+  box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.15);
+}
+
+.card-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  padding: 50rpx 40rpx;
+  color: white;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.card-title {
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+.card-arrow {
+  font-size: 32rpx;
+  opacity: 0.9;
+}
+
+.card-description {
+  display: block;
+  font-size: 26rpx;
+  opacity: 0.9;
+  margin-bottom: 40rpx;
+  line-height: 1.4;
+}
+
+/* 调整统计卡片布局 */
+.card-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10rpx;
+  margin-top: 30rpx;
+  padding-top: 30rpx;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 5rpx;
+}
+
+.stat-number {
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 6rpx;
+  transition: all 0.3s ease;
+}
+
+.stat-number.highlight {
+  color: #fbbf24; /* 待分配突出显示 */
+  text-shadow: 0 0 10rpx rgba(251, 191, 36, 0.3);
+}
+
+.stat-number.highlight-assigned {
+  color: #f59e0b; /* 已分配突出显示 */
+  text-shadow: 0 0 10rpx rgba(245, 158, 11, 0.3);
+}
+
+.stat-number.highlight-progress {
+  color: #10b981; /* 进行中突出显示 */
+  text-shadow: 0 0 10rpx rgba(16, 185, 129, 0.3);
+}
+
+.stat-label {
+  font-size: 20rpx;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+/* 功能导航区域 */
+.nav-section {
+  padding: 60rpx 40rpx 40rpx;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 50rpx;
+}
+
+.title-line {
+  flex: 1;
+  height: 1rpx;
+  background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+}
+
+.title-text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #334155;
+  padding: 0 30rpx;
+  white-space: nowrap;
+}
+
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24rpx;
+}
+
+.nav-item {
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx 30rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 1rpx solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav-item:active {
+  transform: translateY(-2rpx);
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.1);
+  border-color: #3b82f6;
+}
+
+.nav-icon {
+  font-size: 60rpx;
+  margin-bottom: 20rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+
+.nav-icon.history {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: white;
+}
+
+.nav-icon.statistics {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.nav-name {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 10rpx;
+}
+
+.nav-desc {
+  display: block;
+  font-size: 24rpx;
+  color: #64748b;
+}
+
+/* 系统状态区域 */
+.status-section {
+  padding: 0 40rpx 40rpx;
+}
+
+.status-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  border: 1rpx solid #f1f5f9;
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.status-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #334155;
+}
+
+.refresh-btn {
+  font-size: 24rpx;
+  color: #3b82f6;
+  padding: 10rpx 20rpx;
+  border-radius: 16rpx;
+  background: #eff6ff;
+}
+
+.refresh-btn:active {
+  background: #dbeafe;
+}
+
+.status-info {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-label {
+  font-size: 26rpx;
+  color: #64748b;
+}
+
+.status-value {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+/* 底部操作栏 */
+.footer-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 30rpx 40rpx;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.logout-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  color: white;
+  border: none;
+  border-radius: 16rpx;
+  padding: 28rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* 加载动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header-content,
+.main-card,
+.nav-item,
+.status-card {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.nav-item:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.nav-item:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.status-card {
+  animation-delay: 0.3s;
+}
+
+/* 统计数据提示 */
+.stat-number.highlight,
+.stat-number.highlight-assigned,
+.stat-number.highlight-progress {
+  position: relative;
+}
+
+.stat-number.highlight::after,
+.stat-number.highlight-assigned::after,
+.stat-number.highlight-progress::after {
+  content: '';
+  position: absolute;
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background-color: currentColor;
+  top: -5rpx;
+  right: -5rpx;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10rpx rgba(251, 191, 36, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
+  }
+}
+
+.stat-number.highlight-assigned::after {
+  animation-delay: 0.2s;
+  box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+}
+
+.stat-number.highlight-progress::after {
+  animation-delay: 0.4s;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+}
+
+/* 在.stat-number样式后添加未完成任务的样式 */
+.stat-number.highlight-unfinished {
+  color: #ef4444; /* 红色突出显示 */
+  text-shadow: 0 0 10rpx rgba(239, 68, 68, 0.3);
+}
+
+/* 更新动画样式 */
+.stat-number.highlight-unfinished::after {
+  animation-delay: 0.6s;
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+}
+
+/* 更新card-stats的grid布局为5列 */
+.card-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 从4改为5 */
+  gap: 10rpx;
+  margin-top: 30rpx;
+  padding-top: 30rpx;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.2);
+}

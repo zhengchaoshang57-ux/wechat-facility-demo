@@ -1,0 +1,203 @@
+<!--pages/PLANT_B_REPAIR/todo/todo.wxml-->
+<view class="container">
+  <!-- 顶部标题栏 -->
+  <view class="header">
+    <view class="header-left">
+      <text class="back-btn" bindtap="goBack">←</text>
+    </view>
+    <text class="header-title">待办事项</text>
+    <view class="header-right">
+      <text class="filter-btn" bindtap="showFilter">筛选</text>
+    </view>
+  </view>
+  
+  <!-- 统计信息 -->
+  <view class="stats">
+    <view class="stat-item">
+      <text class="stat-number">{{pendingCount}}</text>
+      <text class="stat-label">待处理</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{inProgressCount}}</text>
+      <text class="stat-label">进行中</text>
+    </view>
+  </view>
+
+  <!-- 待办事项列表 -->
+  <scroll-view class="todo-list" scroll-y="true" style="height: {{scrollHeight}}px;">
+    <!-- 今日待办 -->
+    <view class="section-title" wx:if="{{todayTodos.length > 0}}">今日待办</view>
+    <block wx:for="{{todayTodos}}" wx:key="id">
+      <view class="todo-item">
+        <view class="todo-header">
+          <text class="todo-title">{{item.title}}</text>
+          <text class="todo-status {{item.status === 'in-progress' ? 'in-progress' : 'normal'}}">
+            {{item.status === 'in-progress' ? '进行中' : '待处理'}}
+          </text>
+        </view>
+        
+        <!-- 显示三个下拉菜单信息 -->
+        <view class="todo-info-group">
+          <text class="todo-info">来源：{{item.source || '未选择'}}</text>
+          <text class="todo-info">问题区域：{{item.problemArea || '未选择'}}</text>
+          <text class="todo-info">问题：{{item.problem || '未选择'}}</text>
+        </view>
+
+        <!-- 显示子区域信息（如果有） -->
+        <view class="todo-info-group" wx:if="{{item.subArea && item.subArea !== '未选择'}}">
+          <text class="todo-info">子区域：{{item.subArea === '其他' ? item.otherSubAreaDescription : item.subArea}}</text>
+          <text class="todo-info" wx:if="{{item.doorNumber}}">门牌号：{{item.doorNumber}}</text>
+        </view>
+        
+        <text class="todo-desc">描述：{{item.description}}</text>
+
+        <!-- 图片显示 -->
+        <view class="todo-images" wx:if="{{item.images && item.images.length > 0}}">
+          <view class="images-title">相关图片 ({{item.images.length}}张)</view>
+          <view class="images-list">
+            <block wx:for="{{item.images}}" wx:key="index" wx:for-item="img">
+              <image class="todo-image" 
+                     src="{{img}}" 
+                     mode="aspectFill" 
+                     bindtap="previewImage" 
+                     data-index="{{index}}" 
+                     data-id="{{item.id}}"></image>
+            </block>
+          </view>
+        </view>
+
+        <view class="todo-footer">
+          <!-- 显示开始时间 -->
+          <text class="todo-time" wx:if="{{item.startTime}}">开始时间：{{item.startTime}}</text>
+          <text class="todo-time">创建时间：{{item.createTime}}</text>
+          <text class="todo-creator">创建人：{{item.creator || '未知'}}</text>
+          <text class="todo-assignee" wx:if="{{item.assignee}}">维修员：{{item.assignee}}</text>
+        </view>
+
+        <view class="todo-actions">
+          <button class="action-btn secondary" bindtap="editTodo" data-id="{{item.id}}">编辑</button>
+          <button class="action-btn delete" bindtap="deleteTodo" data-id="{{item.id}}">删除</button>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 明日待办 -->
+    <view class="section-title" wx:if="{{tomorrowTodos.length > 0}}">明日待办</view>
+    <block wx:for="{{tomorrowTodos}}" wx:key="id">
+      <view class="todo-item">
+        <view class="todo-header">
+          <text class="todo-title">{{item.title}}</text>
+          <text class="todo-status {{item.status === 'in-progress' ? 'in-progress' : 'normal'}}">
+            {{item.status === 'in-progress' ? '进行中' : '待处理'}}
+          </text>
+        </view>
+        
+        <!-- 显示三个下拉菜单信息 -->
+        <view class="todo-info-group">
+          <text class="todo-info">来源：{{item.source || '未选择'}}</text>
+          <text class="todo-info">问题区域：{{item.problemArea || '未选择'}}</text>
+          <text class="todo-info">问题：{{item.problem || '未选择'}}</text>
+        </view>
+
+        <!-- 显示子区域信息（如果有） -->
+        <view class="todo-info-group" wx:if="{{item.subArea && item.subArea !== '未选择'}}">
+          <text class="todo-info">子区域：{{item.subArea === '其他' ? item.otherSubAreaDescription : item.subArea}}</text>
+          <text class="todo-info" wx:if="{{item.doorNumber}}">门牌号：{{item.doorNumber}}</text>
+        </view>
+        
+        <text class="todo-desc">描述：{{item.description}}</text>
+
+        <!-- 图片显示 -->
+        <view class="todo-images" wx:if="{{item.images && item.images.length > 0}}">
+          <view class="images-title">相关图片 ({{item.images.length}}张)</view>
+          <view class="images-list">
+            <block wx:for="{{item.images}}" wx:key="index" wx:for-item="img">
+              <image class="todo-image" 
+                     src="{{img}}" 
+                     mode="aspectFill" 
+                     bindtap="previewImage" 
+                     data-index="{{index}}" 
+                     data-id="{{item.id}}"></image>
+            </block>
+          </view>
+        </view>
+
+        <view class="todo-footer">
+          <!-- 显示开始时间（如果有） -->
+          <text class="todo-time" wx:if="{{item.startTime}}">开始时间：{{item.startTime}}</text>
+          <text class="todo-time">创建时间：{{item.createTime}}</text>
+          <text class="todo-creator">创建人：{{item.creator || '未知'}}</text>
+          <text class="todo-assignee" wx:if="{{item.assignee}}">维修员：{{item.assignee}}</text>
+        </view>
+        
+        <view class="todo-actions">
+          <button class="action-btn secondary" bindtap="editTodo" data-id="{{item.id}}">编辑</button>
+          <button class="action-btn delete" bindtap="deleteTodo" data-id="{{item.id}}">删除</button>
+        </view>
+      </view>
+    </block>
+  
+    <!-- 其他待办 -->
+    <view class="section-title" wx:if="{{otherTodos.length > 0}}">其他待办</view>
+    <block wx:for="{{otherTodos}}" wx:key="id">
+      <view class="todo-item">
+        <view class="todo-header">
+          <text class="todo-title">{{item.title}}</text>
+          <text class="todo-status {{item.status === 'in-progress' ? 'in-progress' : 'normal'}}">
+            {{item.status === 'in-progress' ? '进行中' : '待处理'}}
+          </text>
+        </view>
+        
+        <!-- 显示三个下拉菜单信息 -->
+        <view class="todo-info-group">
+          <text class="todo-info">来源：{{item.source || '未选择'}}</text>
+          <text class="todo-info">问题区域：{{item.problemArea || '未选择'}}</text>
+          <text class="todo-info">问题：{{item.problem || '未选择'}}</text>
+        </view>
+
+        <!-- 显示子区域信息（如果有） -->
+        <view class="todo-info-group" wx:if="{{item.subArea && item.subArea !== '未选择'}}">
+          <text class="todo-info">子区域：{{item.subArea === '其他' ? item.otherSubAreaDescription : item.subArea}}</text>
+          <text class="todo-info" wx:if="{{item.doorNumber}}">门牌号：{{item.doorNumber}}</text>
+        </view>
+        
+        <text class="todo-desc">描述：{{item.description}}</text>
+
+        <!-- 图片显示 -->
+        <view class="todo-images" wx:if="{{item.images && item.images.length > 0}}">
+          <view class="images-title">相关图片 ({{item.images.length}}张)</view>
+          <view class="images-list">
+            <block wx:for="{{item.images}}" wx:key="index" wx:for-item="img">
+              <image class="todo-image" 
+                     src="{{img}}" 
+                     mode="aspectFill" 
+                     bindtap="previewImage" 
+                     data-index="{{index}}" 
+                     data-id="{{item.id}}"></image>
+            </block>
+          </view>
+        </view>
+
+        <view class="todo-footer">
+          <!-- 显示开始时间（如果有） -->
+          <text class="todo-time" wx:if="{{item.startTime}}">开始时间：{{item.startTime}}</text>
+          <text class="todo-time">创建时间：{{item.createTime}}</text>
+          <text class="todo-creator">创建人：{{item.creator || '未知'}}</text>
+          <text class="todo-assignee" wx:if="{{item.assignee}}">维修员：{{item.assignee}}</text>
+        </view>
+        
+        <view class="todo-actions">
+          <button class="action-btn secondary" bindtap="editTodo" data-id="{{item.id}}">编辑</button>
+          <button class="action-btn delete" bindtap="deleteTodo" data-id="{{item.id}}">删除</button>
+        </view>
+      </view>
+    </block>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{todayTodos.length === 0 && tomorrowTodos.length === 0 && otherTodos.length === 0}}">
+      <view class="empty-icon">🗒</view>
+      <text class="empty-text">暂无待办事项</text>
+      <text class="empty-desc">点击下方按钮创建新的待办事项</text>
+    </view>
+  </scroll-view>  
+</view>
